@@ -1,8 +1,8 @@
 /.idea/
 /.vscode/
-/node_modules/
-/target/
-/dist/
+**/node_modules/
+**/target/
+**/dist/
 *.log
 *.iml
 .env
