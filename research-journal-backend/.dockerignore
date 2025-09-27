@@ -1,0 +1,6 @@
+.git
+.gitignore
+target
+mvnw.cmd
+node_modules
+uploads
