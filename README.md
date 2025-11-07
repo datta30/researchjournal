@@ -7,13 +7,50 @@ A full-stack platform for coordinating manuscript submissions, peer review, and 
 ```
 research-journal-frontend/   # React 18 + Vite + Tailwind client
 research-journal-backend/    # Spring Boot 3 REST API server
+docker-compose.yml           # Docker orchestration for all services
 ```
 
-## Prerequisites
+## Running with Docker (Recommended)
 
-- Node.js 18+
+The easiest way to run the entire application stack is using Docker Compose:
+
+```bash
+docker-compose up
+```
+
+This will start:
+- **MySQL** database on port 3306
+- **Backend** API server on port 8081
+- **Frontend** web application on port 80
+
+To stop all services:
+```bash
+docker-compose down
+```
+
+To rebuild containers after code changes:
+```bash
+docker-compose up --build
+```
+
+### Using Pre-built Container Images from GitHub Container Registry
+
+You can also use the pre-built images from GitHub Container Registry:
+
+```bash
+# Pull the latest images
+docker pull ghcr.io/datta30/researchjournal/backend:latest
+docker pull ghcr.io/datta30/researchjournal/frontend:latest
+docker pull ghcr.io/datta30/researchjournal/mysql:latest
+
+# Run the containers (make sure to configure environment variables appropriately)
+```
+
+## Prerequisites for Local Development
+
+- Node.js 20+
 - npm 8+
-- Java 17+
+- Java 21+
 - Maven 3.9+
 - MySQL server with a database named `research_journal`
 
@@ -62,6 +99,13 @@ mvn test
 
 - `jwt.secret` and `jwt.expiration` (milliseconds) can be customized in `application.properties`.
 - `app.upload-dir` controls where uploaded PDFs are stored on disk. Ensure the directory is writable by the JVM process.
+- For Docker deployments, see `docker-compose.yml` for environment variable configuration.
+
+## CI/CD
+
+The repository includes GitHub Actions workflows:
+- **CI Workflow**: Runs tests for both frontend and backend on pull requests
+- **Build and Push Containers**: Builds and pushes Docker images to GitHub Container Registry on push to main
 
 ## Next steps
 
