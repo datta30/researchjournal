@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: research-journal-mysql
     environment:
-      MYSQL_DATABASE: research_journal
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_USER: journal_user
-      MYSQL_PASSWORD: journal_password
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-research_journal}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_USER: ${MYSQL_USER:-journal_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-journal_password}
     ports:
       - "3306:3306"
     volumes:
@@ -26,11 +26,11 @@ services:
       dockerfile: Dockerfile
     container_name: research-journal-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/research_journal
-      SPRING_DATASOURCE_USERNAME: journal_user
-      SPRING_DATASOURCE_PASSWORD: journal_password
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-research_journal}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-journal_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-journal_password}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      JWT_SECRET: your-secret-key-here-change-in-production
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
     ports:
       - "8081:8081"
     depends_on:

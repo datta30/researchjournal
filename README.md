@@ -15,6 +15,10 @@ docker-compose.yml           # Docker orchestration for all services
 The easiest way to run the entire application stack is using Docker Compose:
 
 ```bash
+# Optional: Copy .env.example to .env and customize the values
+cp .env.example .env
+
+# Start all services
 docker-compose up
 ```
 
@@ -32,6 +36,8 @@ To rebuild containers after code changes:
 ```bash
 docker-compose up --build
 ```
+
+**Note**: For production deployments, make sure to set strong passwords and JWT secrets in your `.env` file.
 
 ### Using Pre-built Container Images from GitHub Container Registry
 

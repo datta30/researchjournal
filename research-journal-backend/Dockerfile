@@ -1,18 +1,15 @@
 # syntax=docker/dockerfile:1
 
 FROM maven:3.9.9-eclipse-temurin-21 AS build
-
-# Update CA certificates to fix SSL issues
-RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
-
 WORKDIR /workspace
 
-# Copy pom and source code
+# Copy pom and resolve dependencies first to leverage Docker layer caching
 COPY pom.xml ./
-COPY src src
+RUN mvn dependency:go-offline -B || mvn dependency:resolve -B
 
-# Build the jar
-RUN mvn clean package -DskipTests
+# Copy the actual source and build the jar
+COPY src src
+RUN mvn clean package -DskipTests -B
 
 # Runtime image
 FROM eclipse-temurin:21-jre-alpine
