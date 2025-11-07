@@ -1,18 +1,21 @@
 # syntax=docker/dockerfile:1
 
-FROM maven:3.9.7-eclipse-temurin-17 AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+
+# Update CA certificates to fix SSL issues
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 WORKDIR /workspace
 
-# Copy pom and resolve dependencies first to leverage Docker layer caching
+# Copy pom and source code
 COPY pom.xml ./
-RUN mvn dependency:go-offline
-
-# Copy the actual source and build the jar
 COPY src src
+
+# Build the jar
 RUN mvn clean package -DskipTests
 
 # Runtime image
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Render exposes PORT, default to 8081 for local use
