@@ -5,7 +5,7 @@ WORKDIR /workspace
 
 # Copy pom and resolve dependencies first to leverage Docker layer caching
 COPY pom.xml ./
-RUN mvn dependency:go-offline -B || mvn dependency:resolve -B
+RUN mvn dependency:go-offline -B
 
 # Copy the actual source and build the jar
 COPY src src
