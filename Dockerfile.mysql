@@ -1,0 +1,11 @@
+# syntax=docker/dockerfile:1
+
+FROM mysql:8.0
+
+# Set default database name
+ENV MYSQL_DATABASE=research_journal
+
+# Copy any initialization scripts (optional)
+# COPY ./mysql-init/*.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306

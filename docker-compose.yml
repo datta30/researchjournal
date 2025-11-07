@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: research-journal-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-research_journal}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_USER: ${MYSQL_USER:-journal_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-journal_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - research-journal-network
+
+  backend:
+    build:
+      context: ./research-journal-backend
+      dockerfile: Dockerfile
+    container_name: research-journal-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-research_journal}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-journal_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-journal_password}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - research-journal-network
+
+  frontend:
+    build:
+      context: ./research-journal-frontend
+      dockerfile: Dockerfile
+    container_name: research-journal-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - research-journal-network
+
+volumes:
+  mysql_data:
+
+networks:
+  research-journal-network:
+    driver: bridge
